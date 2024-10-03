@@ -33,7 +33,7 @@ class _SplashScreenState extends State<SplashScreen> {
     if (loggedIn == true) {
       return Get.offAll(() => const BottomNavigation());
     }
-    Get.offAll(() => const WalkThroughScreen());
+    Get.to(() => const WalkThroughScreen());
   }
 
   @override

@@ -11,7 +11,7 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SharedPrefs.instance.init();
-  InjectDependencies.inject();
+  await InjectDependencies.inject();
   runApp(const MyApp());
 }
 

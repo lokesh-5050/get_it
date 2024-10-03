@@ -1,3 +1,4 @@
+import 'package:ecommerce_seller/presentation/on_boarding_section/create_account/create_account_screen.dart';
 import 'package:ecommerce_seller/presentation/on_boarding_section/login_screen/components/login_with_email.dart';
 import 'package:ecommerce_seller/presentation/on_boarding_section/login_screen/components/login_with_phone.dart';
 import 'package:ecommerce_seller/presentation/on_boarding_section/login_screen/controller/login_controller.dart';
@@ -29,16 +30,24 @@ class LoginScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 // IconButton(onPressed: (){}, icon: Icon(Icons.arrow_back)),
-                Text(
-                  'Back',
-                  style:
-                      GoogleFonts.poppins(fontSize: 14.px, color: buttonColor),
+                InkWell(
+                  onTap: () => Get.back(),
+                  child: Text(
+                    'Back',
+                    style: GoogleFonts.poppins(
+                        fontSize: 14.px, color: buttonColor),
+                  ),
                 ),
                 // SizedBox(width: Adaptive.w(5),),
-                Text(
-                  'Sign up',
-                  style:
-                      GoogleFonts.poppins(fontSize: 14.px, color: buttonColor),
+                InkWell(
+                  onTap: () {
+                    Get.to(() => CreateAccountScreen());
+                  },
+                  child: Text(
+                    'Sign up',
+                    style: GoogleFonts.poppins(
+                        fontSize: 14.px, color: buttonColor),
+                  ),
                 ),
               ],
             ),

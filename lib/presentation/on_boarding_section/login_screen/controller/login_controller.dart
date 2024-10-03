@@ -24,6 +24,8 @@ class LoginController extends GetxController {
 
   final loginOtpVerifyStatus = Status.success.obs;
 
+  final createAccountStatus = Status.success.obs;
+
   changingSelectedOption(String login) {
     selectedValue.value = login;
   }
@@ -112,6 +114,66 @@ class LoginController extends GetxController {
       SharedPrefs.instance
           .setKey(SharedPrefKeyConstants.apiToken, success['token']);
       Get.offAll(() => const BottomNavigation());
+    });
+
+    return response.isRight();
+  }
+
+  Future<bool> register(
+      {required String userName,
+      required String email,
+      required String mobileNo,
+      required String password}) async {
+    debugPrint('Check : ${mobileNo}');
+    //Validations
+    if (userName.isEmpty) {
+      ScaffoldMessenger.of(Get.context!).showSnackBar(
+          const SnackBar(content: Text("Username cannot be empty!")));
+      return false;
+    } else if (mobileNo.toString().isEmpty) {
+      ScaffoldMessenger.of(Get.context!).showSnackBar(
+          const SnackBar(content: Text("Mobile number cannot be empty!")));
+      return false;
+    } else if (mobileNo.length < 10) {
+      ScaffoldMessenger.of(Get.context!).showSnackBar(const SnackBar(
+          content: Text("Mobile number must be greater than 9 digits!")));
+      return false;
+    } else if (email.isEmpty) {
+      ScaffoldMessenger.of(Get.context!).showSnackBar(
+          const SnackBar(content: Text("email cannot be empty!")));
+      return false;
+    } else if (password.isEmpty || password.length < 4) {
+      ScaffoldMessenger.of(Get.context!).showSnackBar(SnackBar(
+          content: Text(password.isEmpty
+              ? 'Password cannot be empty'
+              : password.length < 4
+                  ? 'Password must be greater than 3 digit'
+                  : '')));
+      return false;
+    }
+
+    createAccountStatus.value = Status.loading;
+
+    final response = await loginService.register(data: {
+      "userName": userName,
+      "email": email,
+      "mobileNumber": mobileNo,
+      "password": password
+    });
+
+    response.fold((isFailure) {
+      ScaffoldMessenger.of(Get.context!).showSnackBar(
+          SnackBar(content: Text(Helpers.convertFailureToMessage(isFailure))));
+      createAccountStatus.value = Status.failed;
+    }, (success) {
+      debugPrint('Register USer res : ${success['data']}');
+      Map<String, dynamic> data = success['data'];
+      createAccountStatus.value = Status.success;
+      Get.to(() => OtpScreen(
+            mobileNo: mobileNo.toString(),
+            demoOtp: data['otp'],
+            accountId: data['_id'],
+          ));
     });
 
     return response.isRight();

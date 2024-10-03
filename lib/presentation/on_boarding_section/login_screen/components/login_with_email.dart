@@ -1,4 +1,4 @@
-import 'package:ecommerce_seller/presentation/main_section/home_screen/home_screen.dart';
+import 'package:ecommerce_seller/presentation/main_section/bottom_navigation/bottom_navigation_screen.dart';
 import 'package:ecommerce_seller/presentation/on_boarding_section/login_screen/controller/login_controller.dart';
 import 'package:ecommerce_seller/presentation/on_boarding_section/reset_password/reset_password_screen.dart';
 import 'package:ecommerce_seller/presentation/widgets/button_widgets.dart';
@@ -115,7 +115,7 @@ class LoginScreenWithEmail extends StatelessWidget {
                                 loginWithEmail: true)
                             .then((value) {
                           if (value) {
-                            Get.offAll(() => HomeScreen());
+                            Get.offAll(() => const BottomNavigation());
                           }
                         });
                       },

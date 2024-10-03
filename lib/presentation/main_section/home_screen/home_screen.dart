@@ -1,4 +1,4 @@
-import 'package:ecommerce_seller/presentation/main_section/home_screen/category_by_clicking_cat/category_screen.dart';
+import 'package:ecommerce_seller/presentation/main_section/home_screen/category/category_by_clicking_cat/category_screen.dart';
 import 'package:ecommerce_seller/presentation/main_section/home_screen/components/extracted_homewidgets.dart';
 import 'package:ecommerce_seller/presentation/main_section/home_screen/flash_sale/flash_sale_screen.dart';
 import 'package:ecommerce_seller/presentation/main_section/home_screen/top_products/top_product_screen.dart';

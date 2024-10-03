@@ -42,4 +42,20 @@ class LoginService {
       return Left(ServerFailure(message: e.toString()));
     }
   }
+
+  Future<Either<Failure, Map<String, dynamic>>> register({
+    required Map<String, dynamic> data,
+  }) async {
+    try {
+      final response = await Helpers.sendRequest(
+        dio,
+        RequestType.post,
+        ApiEndpoints.register,
+        queryParams: data,
+      );
+      return Right(response);
+    } on Exception catch (e) {
+      return Left(ServerFailure(message: e.toString()));
+    }
+  }
 }

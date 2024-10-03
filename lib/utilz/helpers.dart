@@ -266,7 +266,9 @@ class Helpers {
           break;
       }
 
-      if (response.statusCode == 200 || response.statusCode == 202) {
+      if (response.statusCode == 200 ||
+          response.statusCode == 202 ||
+          response.statusCode == 201) {
         logger.d(
             "Path :: $path\n${dio.options.baseUrl}$path ,\nRequestType => $type,\npayLoad => ${queryParams ?? data}\nSuccess Data => ${response.data}");
         return response.data as Map<String, dynamic>;
