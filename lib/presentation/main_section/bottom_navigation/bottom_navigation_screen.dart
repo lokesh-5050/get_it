@@ -42,8 +42,8 @@ class _BottomNavigationState extends State<BottomNavigation> {
 
   void _onInitialRun() async {
     profileController.getMyProfile();
-    await Future.delayed(Duration(seconds: 5));
     categoryController.getAllCategory();
+    categoryController.getAllSubCategory();
   }
 
   @override

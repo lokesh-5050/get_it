@@ -8,6 +8,7 @@ class ApiEndpoints {
     static const String register = "/$userApis/register";
     static const String myProfile = "/$userApis/profile";
     static const String getAllCategory = "/$userApis/categories";
+    static const String getAllSubCategory = "/$userApis/subcategories";
 
 
 

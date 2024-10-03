@@ -15,6 +15,8 @@ class CategoryController extends GetxController {
 
   List<CategoryModel> _allCategory = [];
 
+  List<CategoryModel> _allSubCategory = [];
+
   Status _categoryStatus = Status.loading;
 
   Status get categoryStatus => _categoryStatus;
@@ -28,6 +30,22 @@ class CategoryController extends GetxController {
 
   set allCategory(List<CategoryModel> list) {
     _allCategory = list;
+    update();
+  }
+
+  Status _subCategoryStatus = Status.success;
+
+  Status get subCategoryStatus => _subCategoryStatus;
+
+  set subCategoryStatus(Status status) {
+    _categoryStatus = status;
+    update();
+  }
+
+  List<CategoryModel> get allSubCategory => _allSubCategory;
+
+  set allSubCategory(List<CategoryModel> list) {
+    _allSubCategory = list;
     update();
   }
 
@@ -46,6 +64,26 @@ class CategoryController extends GetxController {
             .toList();
         allCategory = list;
         categoryStatus = Status.success;
+      }
+    });
+  }
+
+  Future<void> getAllSubCategory() async {
+    subCategoryStatus = Status.loading;
+    final response = await categoryService.getAllSubCategory();
+
+    response.fold((isFailure) {
+      debugPrint(
+          'Error in fetching category : ${Helpers.convertFailureToMessage(isFailure)}');
+      subCategoryStatus = Status.failed;
+    }, (success) {
+      if (success['data'].length != 0) {
+        debugPrint('Sub Categody : ${success['data']}');
+        List<CategoryModel> list = success['data']
+            .map<CategoryModel>((e) => CategoryModel.fromJson(e))
+            .toList();
+        allSubCategory = list;
+        subCategoryStatus = Status.success;
       }
     });
   }
