@@ -1,4 +1,4 @@
-
+import 'package:ecommerce_seller/presentation/on_boarding_section/create_account/create_account_screen.dart';
 import 'package:ecommerce_seller/presentation/on_boarding_section/login_screen/components/login_with_email.dart';
 import 'package:ecommerce_seller/presentation/on_boarding_section/login_screen/components/login_with_phone.dart';
 import 'package:ecommerce_seller/presentation/on_boarding_section/login_screen/controller/login_controller.dart';
@@ -9,12 +9,12 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class LoginScreen extends StatelessWidget {
-   LoginScreen({super.key});
+  LoginScreen({super.key});
 
+  PageController pageController = PageController();
 
- PageController pageController=PageController();
+  final LoginController loginController = Get.find<LoginController>();
 
- final login=Get.put(LoginController());
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,115 +23,176 @@ class LoginScreen extends StatelessWidget {
         child: Column(
           children: [
             SizedBox(
-              height:Adaptive.h(5),
+              height: Adaptive.h(5),
             ),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 // IconButton(onPressed: (){}, icon: Icon(Icons.arrow_back)),
-                Text('Back',style: GoogleFonts.poppins(fontSize: 14.px,color: buttonColor),),
+                InkWell(
+                  onTap: () => Get.back(),
+                  child: Text(
+                    'Back',
+                    style: GoogleFonts.poppins(
+                        fontSize: 14.px, color: buttonColor),
+                  ),
+                ),
                 // SizedBox(width: Adaptive.w(5),),
-                                Text('Sign up',style: GoogleFonts.poppins(fontSize: 14.px,color: buttonColor),),
-
-                
+                InkWell(
+                  onTap: () {
+                    Get.to(() => CreateAccountScreen());
+                  },
+                  child: Text(
+                    'Sign up',
+                    style: GoogleFonts.poppins(
+                        fontSize: 14.px, color: buttonColor),
+                  ),
+                ),
               ],
             ),
-            SizedBox(height: Adaptive.h(4),),
+            SizedBox(
+              height: Adaptive.h(4),
+            ),
             Align(
               alignment: Alignment.centerLeft,
-              child: Text('Login using Mobile\nNumber or Email',style: GoogleFonts.poppins(
-                 fontWeight: FontWeight.w600,fontSize: 30.px),),
+              child: Text(
+                'Login using Mobile\nNumber or Email',
+                style: GoogleFonts.poppins(
+                    fontWeight: FontWeight.w600, fontSize: 30.px),
+              ),
             ),
-                        SizedBox(height: Adaptive.h(2),),
-
+            SizedBox(
+              height: Adaptive.h(2),
+            ),
             Container(
               // padding: EdgeInsets.symmetric(horizontal: 5.w,vertical: 1.5.h),
               margin: EdgeInsets.symmetric(horizontal: 6.w),
               decoration: BoxDecoration(
                 color: Color(0xffE6E6E6),
                 borderRadius: BorderRadius.circular(Adaptive.w(8)),
-        
               ),
-              child: Obx(
-               () {
-                  return Row(
-                    children: [
-                     login.selectedValue.value=='Login'? GestureDetector(
-                          onTap: () {
-                            //  login.changingSelectedOption('login');
-                                pageController.previousPage(duration: Duration(milliseconds: 300), curve: Curves.linear);
-                          },
-                           child: Material(
+              child: Obx(() {
+                return Row(
+                  children: [
+                    loginController.selectedValue.value == 'Login'
+                        ? GestureDetector(
+                            onTap: () {
+                              //  loginController.changingSelectedOption('login');
+                              pageController.previousPage(
+                                  duration: const Duration(milliseconds: 300),
+                                  curve: Curves.linear);
+                            },
+                            child: Material(
                               elevation: 5,
-                                                      borderRadius: BorderRadius.circular(Adaptive.w(8)),
-                                 
+                              borderRadius:
+                                  BorderRadius.circular(Adaptive.w(8)),
                               child: Container(
                                 width: Adaptive.w(45),
                                 height: Adaptive.h(6),
                                 // padding: EdgeInsets.only(left: 5.w,right: 5.w,top: 1.h,bottom: 1.h),
                                 decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(Adaptive.w(12)),
+                                  borderRadius:
+                                      BorderRadius.circular(Adaptive.w(12)),
                                   color: buttonColor,
                                 ),
-                                child: Center(child: Text('Mobile Number',style: GoogleFonts.roboto(color: Colors.white,fontWeight: FontWeight.w600),),),
+                                child: Center(
+                                  child: Text(
+                                    'Mobile Number',
+                                    style: GoogleFonts.roboto(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                ),
                               ),
                             ),
-                         )
-                         :GestureDetector(
-                          onTap: () {
-                              login.changingSelectedOption('Login');
-                                pageController.previousPage(duration: Duration(milliseconds: 300), curve: Curves.linear);
-                          },
-                           child: Container(
-                                padding: EdgeInsets.only(left: 5.w,right: 5.w,top: 1.h,bottom: 1.h),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  color: Colors.transparent,
-                                ),
-                                child: Center(child: Text('Mobile Number',style: GoogleFonts.roboto(color: Colors.black,fontWeight: FontWeight.w600),),),
+                          )
+                        : GestureDetector(
+                            onTap: () {
+                              loginController.changingSelectedOption('Login');
+                              pageController.previousPage(
+                                  duration: const Duration(milliseconds: 300),
+                                  curve: Curves.linear);
+                            },
+                            child: Container(
+                              padding: EdgeInsets.only(
+                                  left: 5.w, right: 5.w, top: 1.h, bottom: 1.h),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: Colors.transparent,
                               ),
-                         )
-                        ,
-                      Spacer(),
-                      login.selectedValue.value=='Email'?   GestureDetector(
-                              onTap: () {
-                                login.changingSelectedOption('Email');
-                                pageController.nextPage(duration: Duration(milliseconds: 300), curve: Curves.linear);
-                              },
-                               child:  Container(
-                                width: Adaptive.w(45),
-                                height: Adaptive.h(6),
-                                // padding: EdgeInsets.only(left: 5.w,right: 5.w,top: 1.h,bottom: 1.h),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(Adaptive.w(12)),
-                                   color:buttonColor ,
+                              child: Center(
+                                child: Text(
+                                  'Mobile Number',
+                                  style: GoogleFonts.roboto(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w600),
                                 ),
-                                child: Center(child: Text('Email',style: GoogleFonts.roboto(color: Colors.black,fontWeight: FontWeight.w600),),),
                               ),
-                            )
-                             :GestureDetector(
-                              onTap: () {
-                                login.changingSelectedOption('Email');
-                                pageController.nextPage(duration: Duration(milliseconds: 300), curve: Curves.linear);
-                              },
-                               child: Container(
-                                                   padding: EdgeInsets.only(left: 12.w,right: 12.w,top: 1.h,bottom: 1.h),
-                                                   decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  // color: Colors.transparent,
-                                  
-                                                   ),
-                                                   child:  Center(child: Text(' Email',style: GoogleFonts.roboto(color: Colors.black,fontWeight: FontWeight.w600),),),
-                                                   ),
-                             )
-                                            
-                    ],
-                  );
-                }
-              ),
+                            ),
+                          ),
+                    Spacer(),
+                    loginController.selectedValue.value == 'Email'
+                        ? GestureDetector(
+                            onTap: () {
+                              loginController.changingSelectedOption('Email');
+                              pageController.nextPage(
+                                  duration: Duration(milliseconds: 300),
+                                  curve: Curves.linear);
+                            },
+                            child: Container(
+                              width: Adaptive.w(45),
+                              height: Adaptive.h(6),
+                              // padding: EdgeInsets.only(left: 5.w,right: 5.w,top: 1.h,bottom: 1.h),
+                              decoration: BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.circular(Adaptive.w(12)),
+                                color: buttonColor,
+                              ),
+                              child: Center(
+                                child: Text(
+                                  'Email',
+                                  style: GoogleFonts.roboto(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w600),
+                                ),
+                              ),
+                            ),
+                          )
+                        : GestureDetector(
+                            onTap: () {
+                              loginController.changingSelectedOption('Email');
+                              pageController.nextPage(
+                                  duration: Duration(milliseconds: 300),
+                                  curve: Curves.linear);
+                            },
+                            child: Container(
+                              padding: EdgeInsets.only(
+                                  left: 12.w,
+                                  right: 12.w,
+                                  top: 1.h,
+                                  bottom: 1.h),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                // color: Colors.transparent,
+                              ),
+                              child: Center(
+                                child: Text(
+                                  ' Email',
+                                  style: GoogleFonts.roboto(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w600),
+                                ),
+                              ),
+                            ),
+                          )
+                  ],
+                );
+              }),
             ),
-            SizedBox(height: 2.h,),
+            SizedBox(
+              height: 2.h,
+            ),
             Expanded(
               child: Container(
                 //  height: Adaptive.h(6),
@@ -139,8 +200,8 @@ class LoginScreen extends StatelessWidget {
                 child: PageView(
                   scrollDirection: Axis.horizontal,
                   physics: AlwaysScrollableScrollPhysics(),
-                  controller:pageController,
-                  children:  [
+                  controller: pageController,
+                  children: [
                     LoginScreenWithPhone(),
                     LoginScreenWithEmail()
                     // LoginScreenWithPhone(),
@@ -148,10 +209,10 @@ class LoginScreen extends StatelessWidget {
                   ],
                   onPageChanged: (value) {
                     print("index:$value");
-                    if (value==0) {
-                      // login.changingSelectedOption("login");
-                    }else{
-                      // login.changingSelectedOption("email");
+                    if (value == 0) {
+                      // loginController.changingSelectedOption("login");
+                    } else {
+                      // loginController.changingSelectedOption("email");
                     }
                   },
                 ),

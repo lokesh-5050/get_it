@@ -1,6 +1,9 @@
+import 'package:ecommerce_seller/presentation/main_section/bottom_navigation/bottom_navigation_screen.dart';
+import 'package:ecommerce_seller/presentation/on_boarding_section/login_screen/controller/login_controller.dart';
 import 'package:ecommerce_seller/presentation/on_boarding_section/reset_password/reset_password_screen.dart';
 import 'package:ecommerce_seller/presentation/widgets/button_widgets.dart';
 import 'package:ecommerce_seller/utilz/colors.dart';
+import 'package:ecommerce_seller/utilz/enums.dart';
 import 'package:ecommerce_seller/utilz/sized_box.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -8,7 +11,12 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class LoginScreenWithEmail extends StatelessWidget {
-  const LoginScreenWithEmail({super.key});
+  LoginScreenWithEmail({super.key});
+
+  final TextEditingController email = TextEditingController();
+  final TextEditingController password = TextEditingController();
+
+  final LoginController loginController = Get.find<LoginController>();
 
   @override
   Widget build(BuildContext context) {
@@ -16,23 +24,14 @@ class LoginScreenWithEmail extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // Align(
-            //   alignment: Alignment.centerLeft,
-            //   child: Text('Mobile Number',style: GoogleFonts.poppins(
-            //     fontSize: 16.sp,
-            //     fontWeight: FontWeight.w500
-
-            //   ),),
-            // ),
             SizedBox(
               height: 1.h,
             ),
             TextField(
+              controller: email,
               decoration: InputDecoration(
                   floatingLabelBehavior: FloatingLabelBehavior.always,
-
-                  // label: Text('Mobile Number'),
-                  labelText: 'Mobile Number',
+                  labelText: 'Email',
                   labelStyle: GoogleFonts.poppins(
                       fontWeight: FontWeight.w500,
                       fontSize: 14.px,
@@ -45,7 +44,7 @@ class LoginScreenWithEmail extends StatelessWidget {
                   focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: grey.withOpacity(0.3))),
                   //  border: OutlineInputBorder(borderSide: BorderSide.none),
-                  hintText: '+91 | Mobile number ',
+                  hintText: 'example@gmail.com',
                   hintStyle: TextStyle(
                     color: grey.withOpacity(0.3),
                   ),
@@ -55,10 +54,9 @@ class LoginScreenWithEmail extends StatelessWidget {
               height: Adaptive.h(2),
             ),
             TextField(
+              controller: password,
               decoration: InputDecoration(
                   floatingLabelBehavior: FloatingLabelBehavior.always,
-
-                  // label: Text('Mobile Number'),
                   labelText: 'Password',
                   labelStyle: GoogleFonts.poppins(
                       fontWeight: FontWeight.w500,
@@ -69,8 +67,6 @@ class LoginScreenWithEmail extends StatelessWidget {
                         color: black,
                       ),
                       borderRadius: BorderRadius.circular(10)),
-
-                  //  border: OutlineInputBorder(borderSide: BorderSide.none),
                   hintText: 'Password*',
                   hintStyle: TextStyle(
                     color: grey.withOpacity(0.3),
@@ -82,22 +78,6 @@ class LoginScreenWithEmail extends StatelessWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // Checkbox(
-                //           value: true, // Set the initial value of the checkbox
-                //           onChanged: (bool? value) {
-                //             // Define a function to handle changes in the checkbox state
-                //             print('Checkbox value changed to: $value');
-                //           },
-                //           shape: RoundedRectangleBorder(
-                //             borderRadius: BorderRadius.circular(4.0),
-                //             side: BorderSide(color: Color(0XFFFFDC80)),
-                //           ),
-                //           checkColor:Colors.white, // Color of the check mark
-                //           activeColor: Color(0XFFFFDC80), // Color of the box when checked
-                //           focusColor: Color(0XFFFFDC80),
-
-                //         ),
-
                 GestureDetector(
                   onTap: () {
                     Get.to(() => const ResetPassword());
@@ -108,13 +88,12 @@ class LoginScreenWithEmail extends StatelessWidget {
                         text: 'Forget Your Password?',
                         style: GoogleFonts.roboto(
                             fontSize: 16.sp, color: Colors.black)),
-                    TextSpan(
+                    const TextSpan(
                       text: ' Reset Here',
                       style: TextStyle(
                           fontSize: 14,
                           color: Colors.yellow,
-                          fontWeight: FontWeight
-                              .w300, // Optional: You can also apply other styles
+                          fontWeight: FontWeight.w300,
                           decoration: TextDecoration.underline,
                           decorationColor: Colors.yellow),
                     ),
@@ -125,16 +104,32 @@ class LoginScreenWithEmail extends StatelessWidget {
             SizedBox(
               height: Adaptive.h(8),
             ),
-            InkWell(
-                onTap: () {
-                  //  Get.to(()=> OtpScreen());
-                },
-                child: ButtonWidget(
-                  backgroundColor: buttonColor,
-                  title: 'Login',
-                  textColor: Colors.white,
-                  heights: Adaptive.h(6),
-                )),
+            Obx(
+              () => loginController.loginStatus.value != Status.loading
+                  ? InkWell(
+                      onTap: () {
+                        loginController
+                            .login(
+                                password: password.text.trim(),
+                                email: email.text.trim(),
+                                loginWithEmail: true)
+                            .then((value) {
+                          if (value) {
+                            Get.offAll(() => const BottomNavigation());
+                          }
+                        });
+                      },
+                      child: ButtonWidget(
+                        backgroundColor: buttonColor,
+                        title: 'Login',
+                        textColor: Colors.white,
+                        heights: Adaptive.h(6),
+                      ))
+                  : SizedBox(
+                      height: Adaptive.h(6),
+                      child: const Center(child: CircularProgressIndicator()),
+                    ),
+            ),
             SizedBox(
               height: 2.h,
             ),

@@ -1,7 +1,7 @@
-import 'package:ecommerce_seller/presentation/main_section/bottom_navigation/bottom_navigation_screen.dart';
-import 'package:ecommerce_seller/presentation/on_boarding_section/reset_password/update_password_screen.dart';
+import 'package:ecommerce_seller/presentation/on_boarding_section/login_screen/controller/login_controller.dart';
 import 'package:ecommerce_seller/presentation/widgets/button_widgets.dart';
 import 'package:ecommerce_seller/utilz/colors.dart';
+import 'package:ecommerce_seller/utilz/enums.dart';
 import 'package:ecommerce_seller/utilz/sized_box.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -10,9 +10,22 @@ import 'package:pinput/pinput.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class OtpScreen extends StatelessWidget {
-  OtpScreen({super.key,this.isReset=false});
+  final String mobileNo;
+  final String? demoOtp;
+  final TextEditingController pinController;
+  final String? accountId;
 
-final bool isReset;
+  OtpScreen(
+      {super.key,
+      this.isReset = false,
+      required this.mobileNo,
+      this.demoOtp,
+      this.accountId})
+      : pinController = TextEditingController(text: demoOtp ?? '');
+
+  final LoginController loginController = Get.find<LoginController>();
+
+  final bool isReset;
   final focusNode = FocusNode();
 
   final defaultPinTheme = PinTheme(
@@ -27,6 +40,7 @@ final bool isReset;
       border: Border.all(color: grey),
     ),
   );
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,7 +77,7 @@ final bool isReset;
                 SizedBox(
                   height: 3.h,
                 ),
-          
+
                 RichText(
                     text: TextSpan(children: [
                   TextSpan(
@@ -74,7 +88,7 @@ final bool isReset;
                         color: Colors.black),
                   ),
                   TextSpan(
-                    text: '+91 9999999999 \n',
+                    text: '$mobileNo \n',
                     style: GoogleFonts.roboto(
                         fontSize: 14.px,
                         fontWeight: FontWeight.w400,
@@ -92,7 +106,7 @@ final bool isReset;
                 SizedBox(
                   height: Adaptive.h(5),
                 ),
-          
+
                 Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
@@ -105,7 +119,7 @@ final bool isReset;
                 SizedBox(
                   height: Adaptive.h(1),
                 ),
-          
+
                 Row(
                   children: [
                     Text(
@@ -116,42 +130,51 @@ final bool isReset;
                           color: const Color(0xff9E9E9E)),
                     ),
                     const Spacer(),
-                     Text(
+                    Text(
                       'Re-Send Code',
                       style: GoogleFonts.poppins(
                           fontSize: 14.px,
                           fontWeight: FontWeight.w400,
                           color: buttonColor,
                           decoration: TextDecoration.underline,
-                          decorationColor: buttonColor
-                          ),
+                          decorationColor: buttonColor),
                     ),
                   ],
                 ),
                 SizedBox(
                   height: Adaptive.h(6),
                 ),
-                InkWell(
-                    onTap: () {
-                      //  Get.to(()=>BottomNavigation());
-                      if (isReset) {
-                        Get.to(()=>UpdatePassword());
-                      }else{
-                                                Get.to(()=>BottomNavigation());
+                Obx(
+                  () => loginController.loginOtpVerifyStatus.value !=
+                          Status.loading
+                      ? InkWell(
+                          onTap: () {
+                            // if (isReset) {
+                            //   Get.to(() => const UpdatePassword());
+                            // } else {
+                            //   Get.to(() => const BottomNavigation());
+                            // }
 
-                      }
-                    },
-                    child: ButtonWidget(
-                        backgroundColor: buttonColor,
-                        title: 'Login',
-                        textColor: Colors.white,
-                        heights: Adaptive.h(6),
-                        )),
+                            loginController.verifyOtp(
+                                otp: pinController.text.trim() ?? "",
+                                accountId: accountId ?? "");
+                          },
+                          child: ButtonWidget(
+                            backgroundColor: buttonColor,
+                            title: 'Login',
+                            textColor: Colors.white,
+                            heights: Adaptive.h(6),
+                          ))
+                      : SizedBox(
+                          height: Adaptive.h(6),
+                          child: const Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                        ),
+                ),
                 SizedBox(
                   height: Adaptive.h(3),
                 ),
-          
-               
               ],
             ),
           ),
@@ -167,14 +190,15 @@ final bool isReset;
       child: Pinput(
         length: 4,
 
-        // controller: pinController,
+        controller: pinController,
         focusNode: focusNode,
         androidSmsAutofillMethod: AndroidSmsAutofillMethod.smsUserConsentApi,
         listenForMultipleSmsOnAndroid: true,
         defaultPinTheme: defaultPinTheme.copyWith(
             decoration: BoxDecoration(
           color: Color(0xffF2F2F2),
-          borderRadius: BorderRadius.circular(5), // Adjust the radius as needed
+          borderRadius: BorderRadius.circular(5),
+          // Adjust the radius as needed
           border: Border.all(color: Colors.grey),
         )),
 

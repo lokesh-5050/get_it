@@ -47,6 +47,27 @@ dependencies:
   dotted_line: ^3.2.2
   another_stepper: ^1.2.2
 
+  #network_helpers
+  dio: ^5.7.0
+
+  #storage_helpers
+  shared_preferences: ^2.0.6
+
+  #loggers
+  logger: ^2.4.0
+
+  #responisve_helper
+  sizer: ^3.0.0
+
+  dartz: ^0.10.1
+
+  equatable: ^2.0.5
+
+  #image_cache_helper
+  cached_network_image: ^3.3.1
+
+  #loading_content
+  flutter_shimmer: ^2.1.2
   
 
 dev_dependencies:

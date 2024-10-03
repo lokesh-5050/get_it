@@ -1,5 +1,6 @@
 
 
+import 'package:ecommerce_seller/presentation/main_section/home_screen/top_products/top_product_screen.dart';
 import 'package:ecommerce_seller/presentation/main_section/notification/notification_screen.dart';
 import 'package:ecommerce_seller/utilz/colors.dart';
 import 'package:ecommerce_seller/utilz/sized_box.dart';
@@ -10,7 +11,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:velocity_x/velocity_x.dart';
 
-import '../top_products/top_product_screen.dart';
 
 class CategoryScreen extends StatelessWidget {
   const CategoryScreen({super.key});
