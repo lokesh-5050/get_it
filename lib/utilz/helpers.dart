@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:ecommerce_seller/core/failure.dart';
-import 'package:ecommerce_seller/core/shared_pref.dart';
+import 'package:ecommerce_seller/core/shared_prefs/shared_pref.dart';
 import 'package:ecommerce_seller/utilz/enums.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -185,7 +185,7 @@ class Helpers {
                                     secondOptionText,
                                     style: TextStyle(
                                         fontWeight: FontWeight.w400,
-                                        fontSize: 18.px),
+                                        fontSize: 16.px),
                                   ),
                                 ),
                               ),

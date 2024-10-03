@@ -71,7 +71,7 @@ class LoginScreen extends StatelessWidget {
                             onTap: () {
                               //  loginController.changingSelectedOption('login');
                               pageController.previousPage(
-                                  duration: Duration(milliseconds: 300),
+                                  duration: const Duration(milliseconds: 300),
                                   curve: Curves.linear);
                             },
                             child: Material(
@@ -102,7 +102,7 @@ class LoginScreen extends StatelessWidget {
                             onTap: () {
                               loginController.changingSelectedOption('Login');
                               pageController.previousPage(
-                                  duration: Duration(milliseconds: 300),
+                                  duration: const Duration(milliseconds: 300),
                                   curve: Curves.linear);
                             },
                             child: Container(

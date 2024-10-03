@@ -1,7 +1,8 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'package:ecommerce_seller/core/shared_pref.dart';
-import 'package:ecommerce_seller/presentation/main_section/home_screen/home_screen.dart';
+import 'package:ecommerce_seller/core/shared_prefs/shared_pref.dart';
+import 'package:ecommerce_seller/core/shared_prefs/shared_prefs_key_constants.dart';
+import 'package:ecommerce_seller/presentation/main_section/bottom_navigation/bottom_navigation_screen.dart';
 import 'package:ecommerce_seller/presentation/on_boarding_section/walk_through/walk_through.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -26,12 +27,13 @@ class _SplashScreenState extends State<SplashScreen> {
   onInitialRun() async {
     await Future.delayed(const Duration(seconds: 3));
 
-    bool? loggedIn = SharedPrefs.instance.getKey('isLoggedIn');
+    bool? loggedIn =
+        SharedPrefs.instance.getKey(SharedPrefKeyConstants.isLoggedIn);
 
     if (loggedIn == true) {
-      return Get.to(() => const HomeScreen());
+      return Get.offAll(() => const BottomNavigation());
     }
-    Get.to(() => const WalkThroughScreen());
+    Get.offAll(() => const WalkThroughScreen());
   }
 
   @override

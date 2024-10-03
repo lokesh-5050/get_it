@@ -108,8 +108,6 @@ class LoginScreenWithEmail extends StatelessWidget {
               () => loginController.loginStatus.value != Status.loading
                   ? InkWell(
                       onTap: () {
-                        //  Get.to(()=> OtpScreen());
-
                         loginController
                             .login(
                                 password: password.text.trim(),
@@ -117,7 +115,7 @@ class LoginScreenWithEmail extends StatelessWidget {
                                 loginWithEmail: true)
                             .then((value) {
                           if (value) {
-                            Get.to(() => HomeScreen());
+                            Get.offAll(() => HomeScreen());
                           }
                         });
                       },

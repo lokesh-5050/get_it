@@ -25,4 +25,21 @@ class LoginService {
       return Left(ServerFailure(message: e.toString()));
     }
   }
+
+  Future<Either<Failure, Map<String, dynamic>>> verifyOtp({
+    required Map<String, dynamic> data,
+    required String accountId,
+  }) async {
+    try {
+      final response = await Helpers.sendRequest(
+        dio,
+        RequestType.post,
+        '${ApiEndpoints.verifyOtp}/$accountId',
+        queryParams: data,
+      );
+      return Right(response);
+    } on Exception catch (e) {
+      return Left(ServerFailure(message: e.toString()));
+    }
+  }
 }

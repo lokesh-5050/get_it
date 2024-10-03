@@ -1,4 +1,4 @@
-import 'package:ecommerce_seller/core/shared_pref.dart';
+import 'package:ecommerce_seller/core/shared_prefs/shared_pref.dart';
 import 'package:ecommerce_seller/injections.dart';
 import 'package:ecommerce_seller/presentation/on_boarding_section/splash_screen/splash_screen.dart';
 import 'package:ecommerce_seller/utilz/colors.dart';
