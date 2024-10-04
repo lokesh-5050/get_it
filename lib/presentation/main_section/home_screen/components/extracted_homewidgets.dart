@@ -10,13 +10,16 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class HomeCatWidgets extends StatelessWidget {
-  const HomeCatWidgets({
+  HomeCatWidgets({
     super.key,
   });
+
+  final ProductController productController = Get.find<ProductController>();
 
   @override
   Widget build(BuildContext context) {
     return GetBuilder<ProductController>(
+      init: productController,
       builder: (controller) {
         if (controller.categoryStatus == Status.loading) {
           return const PlayStoreShimmer(

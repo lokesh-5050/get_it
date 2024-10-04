@@ -125,6 +125,7 @@ class _TopProductScreenState extends State<TopProductScreen> {
               ),
               sizedBoxHeight10,
               GetBuilder<ProductController>(
+                init: productController,
                 builder: (controller) {
                   if (controller.productsStatus == Status.loading) {
                     return const Column(

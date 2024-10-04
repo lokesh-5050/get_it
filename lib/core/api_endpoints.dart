@@ -22,6 +22,10 @@ class ApiEndpoints {
 
     static const String deleteFromCart = "/$userApis/cart/delete";
 
+    static const String updateCartQuantity = "/$userApis/cart/updateQuantity";
+
+    static const String deleteCardProductById = "/$userApis/cart/products";
+
 
 
 

@@ -23,12 +23,37 @@ class CartService {
     }
   }
 
-  Future<Either<Failure, Map<String, dynamic>>> addToCart() async {
+  Future<Either<Failure, Map<String, dynamic>>> addToCart(
+      {required Map<String, dynamic> data}) async {
+    try {
+      final response = await Helpers.sendRequest(
+          dio, RequestType.post, ApiEndpoints.addToCart,
+          queryParams: data);
+      return Right(response);
+    } on Exception catch (e) {
+      return Left(ServerFailure(message: e.toString()));
+    }
+  }
+
+  Future<Either<Failure, Map<String, dynamic>>> updateCartQuantity(
+      {required Map<String, dynamic> data}) async {
+    try {
+      final response = await Helpers.sendRequest(
+          dio, RequestType.put, ApiEndpoints.updateCartQuantity,
+          queryParams: data);
+      return Right(response);
+    } on Exception catch (e) {
+      return Left(ServerFailure(message: e.toString()));
+    }
+  }
+
+  Future<Either<Failure, Map<String, dynamic>>> deleteCardProductById(
+      {required String productId}) async {
     try {
       final response = await Helpers.sendRequest(
         dio,
-        RequestType.get,
-        ApiEndpoints.getCart,
+        RequestType.delete,
+        '${ApiEndpoints.deleteCardProductById}/$productId',
       );
       return Right(response);
     } on Exception catch (e) {

@@ -248,7 +248,8 @@ class CartScreen extends StatelessWidget {
                                                                   .products?[
                                                                       index]
                                                                   .sId ??
-                                                              '');
+                                                              '',
+                                                          product?.sId ?? '');
                                                 },
                                                 child: Image.asset(
                                                     'assets/images/cartdic.png'),
@@ -270,7 +271,8 @@ class CartScreen extends StatelessWidget {
                                                                   .products?[
                                                                       index]
                                                                   .sId ??
-                                                              '');
+                                                              '',
+                                                          product?.sId ?? '');
                                                 },
                                                 child: Image.asset(
                                                     'assets/images/cartincr.png'),
@@ -413,13 +415,16 @@ class CartScreen extends StatelessWidget {
                                             InkWell(
                                               onTap: () {
                                                 controller
-                                                    .removeProductFromCart(
-                                                        controller
-                                                                .cart
-                                                                .products?[
-                                                                    index]
-                                                                .sId ??
-                                                            '');
+                                                    .deleteCardProductById(
+                                                        productId:
+                                                            product?.sId ?? '',
+                                                        cartProductId:
+                                                            controller
+                                                                    .cart
+                                                                    .products?[
+                                                                        index]
+                                                                    .sId ??
+                                                                '');
                                               },
                                               child: Image.asset(
                                                   'assets/images/cartremove.png'),

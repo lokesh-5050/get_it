@@ -1,5 +1,9 @@
 import 'package:ecommerce_seller/presentation/main_section/account/account_screen.dart';
 import 'package:ecommerce_seller/presentation/main_section/bottom_navigation/controller/bottom_navigation_controller.dart';
+import 'package:ecommerce_seller/presentation/main_section/home_screen/cart/controller/cart_controller.dart';
+import 'package:ecommerce_seller/presentation/main_section/home_screen/cart/controller/cart_controller.dart';
+import 'package:ecommerce_seller/presentation/main_section/home_screen/controller/product_controller.dart';
+import 'package:ecommerce_seller/presentation/main_section/home_screen/controller/product_controller.dart';
 import 'package:ecommerce_seller/presentation/main_section/home_screen/home_screen.dart';
 import 'package:ecommerce_seller/presentation/main_section/orders/orders_screen.dart';
 import 'package:ecommerce_seller/presentation/main_section/profile/controller/profile_controller.dart';
@@ -22,6 +26,8 @@ class _BottomNavigationState extends State<BottomNavigation> {
       Get.find<BottomNavigationController>();
 
   final ProfileController profileController = Get.find<ProfileController>();
+  final ProductController productController = Get.find<ProductController>();
+  final CartController cartController = Get.find<CartController>();
 
   static final List<Widget> _widgetOptions = <Widget>[
     HomeScreen(),
@@ -40,6 +46,11 @@ class _BottomNavigationState extends State<BottomNavigation> {
 
   void _onInitialRun() async {
     profileController.getMyProfile();
+    productController.getAllCategory();
+    productController.getAllSubCategory();
+    productController.fetchTodayDeals();
+    productController.fetchNewArrivals();
+    cartController.getCart();
   }
 
   @override

@@ -34,7 +34,7 @@ class CartModel {
     coupon = json['coupon'];
     walletUsed = json['walletUsed'];
     shippingPrice = json['shippingPrice'];
-    totalPaidAmount = json['totalPaidAmount'];
+    totalPaidAmount = json['totalPaidAmount'].toDouble();
     createdAt = json['createdAt'];
     updatedAt = json['updatedAt'];
     iV = json['__v'];
@@ -82,8 +82,8 @@ class Products {
     vendorId = json['vendorId'];
     size = json['size'];
     quantity = json['quantity'];
-    price = json['price'];
-    totalAmount = json['totalAmount'];
+    price = json['price'].toDouble();
+    totalAmount = json['totalAmount'].toDouble();
     sId = json['_id'];
   }
 

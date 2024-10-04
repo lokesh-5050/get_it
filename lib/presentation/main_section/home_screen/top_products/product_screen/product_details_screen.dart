@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ecommerce_seller/presentation/main_section/home_screen/cart/cart_screen.dart';
+import 'package:ecommerce_seller/presentation/main_section/home_screen/cart/controller/cart_controller.dart';
 import 'package:ecommerce_seller/presentation/main_section/home_screen/controller/product_controller.dart';
 import 'package:ecommerce_seller/presentation/main_section/home_screen/top_products/product_screen/widgets/productdetails_widget.dart';
 import 'package:ecommerce_seller/presentation/main_section/home_screen/top_products/rating_and_review_screen/rating_And_review_screen.dart';
@@ -28,6 +29,8 @@ class ProductDetailsScreen extends StatefulWidget {
 
 class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   final ProductController productController = Get.find<ProductController>();
+
+  final CartController cartController = Get.find<CartController>();
 
   @override
   void initState() {
@@ -77,28 +80,82 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
       floatingActionButton: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          Container(
-            height: Adaptive.h(6),
-            width: Adaptive.w(45),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12.sp),
-              border: Border.all(
-                color: buttonColor,
-              ),
-              color: whiteColor,
-            ),
-            child: Center(
-              child: Text(
-                'Add To Cart',
-                style: GoogleFonts.poppins(
-                    fontSize: 15.px,
-                    color: buttonColor,
-                    fontWeight: FontWeight.w600),
-              ),
-            ),
-          ).onTap(() {
-            Get.to(() => CartScreen());
-          }),
+          GetBuilder(
+            init: productController,
+            builder: (controller) {
+              return GetBuilder<CartController>(
+                // init: cartController,
+                builder: (_cartController) {
+                  return Container(
+                    height: Adaptive.h(6),
+                    width: Adaptive.w(45),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12.sp),
+                      border: Border.all(
+                        color: buttonColor,
+                      ),
+                      color: whiteColor,
+                    ),
+                    child: Center(
+                      child: Text(
+                        _cartController.cart.products?.any((e) =>
+                                    e.product?.sId == controller.product.sId) ??
+                                false
+                            ? "Added To Cart"
+                            : "Add to cart",
+                        style: GoogleFonts.poppins(
+                            fontSize: 15.px,
+                            color: buttonColor,
+                            fontWeight: FontWeight.w600),
+                      ),
+                    ),
+                  ).onTap(() {
+                    if (_cartController.cart.products != null &&
+                        _cartController.cart.products!.any((e) => e.product?.sId == controller.product.sId)) {
+                      debugPrint('This product is already in the cart');
+                      Get.to(CartScreen());
+                      return;
+                    } else {
+                      debugPrint('This product is not in the cart');
+                          cartController
+                              .addToCart(
+                                  productId: controller.product.sId ?? '',
+                                  size: controller.product.size?.length != 0
+                                      ? controller.product.size!.first.toString()
+                                      : "S",
+                                  quantity: 1)
+                              .then((e) async {
+                            if (e) {
+                              cartController.getCart();
+                              Get.to(() => CartScreen());
+                            }
+                          });
+                    }
+                    // if (_cartController.cart.products?.length != 0) {
+                    //   if (_cartController.cart.products!.any(
+                    //       (e) => e.product?.sId != controller.product.sId)) {
+                    //     cartController
+                    //         .addToCart(
+                    //             productId: controller.product.sId ?? '',
+                    //             size: controller.product.size?.length != 0
+                    //                 ? controller.product.size!.first.toString()
+                    //                 : "S",
+                    //             quantity: 1)
+                    //         .then((e) async {
+                    //       if (e) {
+                    //         cartController.getCart();
+                    //         Get.to(() => CartScreen());
+                    //       }
+                    //     });
+                    //   }
+                    // }
+                    //
+                    // Get.to(() => CartScreen());
+                  });
+                },
+              );
+            },
+          ),
           Container(
             height: Adaptive.h(6),
             width: Adaptive.w(45),
@@ -158,7 +215,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               CachedNetworkImage(
-                                imageUrl: product.image!.isNotEmpty
+                                imageUrl: product.image?.length != 0
                                     ? product.image!.first.url ?? ''
                                     : "",
                                 fit: BoxFit.cover,
@@ -183,7 +240,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 scrollDirection: Axis.horizontal,
                                 itemBuilder: (context, index) {
                                   return CachedNetworkImage(
-                                      imageUrl: product.image!.isNotEmpty
+                                      imageUrl: product.image?.length != 0
                                           ? product.image![index].url ?? ''
                                           : "");
                                 },
@@ -217,7 +274,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   Row(
                     children: [
                       Text(
-                        "Color: ${product.color!.isNotEmpty ? product.color!.first : ''}",
+                        "Color: ${product.color?.length != 0 ? product.color!.first : ''}",
                         style: GoogleFonts.poppins(
                             fontSize: 15.px,
                             fontWeight: FontWeight.w400,
@@ -247,7 +304,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               child: ClipRRect(
                                   borderRadius: BorderRadius.circular(12.sp),
                                   child: CachedNetworkImage(
-                                      imageUrl: product.image!.isNotEmpty
+                                      imageUrl: product.image?.length != 0
                                           ? product.image![index].url ?? ''
                                           : "")));
                         },

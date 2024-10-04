@@ -15,10 +15,19 @@ class ProductController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    getAllCategory();
-    getAllSubCategory();
-    fetchTodayDeals();
-    fetchNewArrivals();
+    // getAllCategory();
+    // getAllSubCategory();
+    // fetchTodayDeals();
+    // fetchNewArrivals();
+  }
+
+  void clear() {
+    getTodayDeals = [];
+    getNewArrivals = [];
+    product = ProductModel();
+    products = [];
+    allCategory = [];
+    allSubCategory = [];
   }
 
   late ProductService productService = ProductService(dio);
