@@ -225,10 +225,14 @@ class HomeScreen extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: GestureDetector(
                   onTap: () {
-                    Get.to(() => const TopProductScreen());
+                    Get.to(() => const TopProductScreen(
+                          categoryId: "",
+                          type: "",
+                        ));
                   },
                   child: Image.asset('assets/images/homeban2.png')),
             ),
+            sizedBoxHeight10,
             Padding(
               padding: const EdgeInsets.only(left: 8.0),
               child: Align(

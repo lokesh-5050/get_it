@@ -13,6 +13,18 @@ class ApiEndpoints {
     static const String getNewArrivals = "/$userApis/new-arrivals";
 
 
+    static const String getProductsByMainCategory = "/$userApis/products/mainCategory";
+    static const String getProductById = "/$userApis/products";
+
+    static const String getCart = "/$userApis/cart/get";
+
+    static const String addToCart = "/$userApis/cart/add";
+
+    static const String deleteFromCart = "/$userApis/cart/delete";
+
+
+
+
 
 
 

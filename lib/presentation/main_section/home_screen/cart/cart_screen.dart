@@ -1,8 +1,13 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:ecommerce_seller/presentation/main_section/home_screen/cart/controller/cart_controller.dart';
 import 'package:ecommerce_seller/presentation/main_section/home_screen/cart/payment/payment_screen.dart';
 import 'package:ecommerce_seller/presentation/main_section/notification/notification_screen.dart';
 import 'package:ecommerce_seller/presentation/main_section/search_screen/search_screen.dart';
 import 'package:ecommerce_seller/presentation/widgets/bottomsheet_function.dart';
+import 'package:ecommerce_seller/src/model/cart/cart_model.dart';
+import 'package:ecommerce_seller/utilz/enums.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_shimmer/flutter_shimmer.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
@@ -12,7 +17,9 @@ import '../../../../utilz/colors.dart';
 import '../../../../utilz/sized_box.dart';
 
 class CartScreen extends StatelessWidget {
-  const CartScreen({super.key});
+  CartScreen({super.key});
+
+  final CartController cartController = Get.find<CartController>();
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +42,9 @@ class CartScreen extends StatelessWidget {
                       sizedBoxWidth40,
                       // Image.asset('assets/images/home_screen_logo.png',color: grey,),
                       IconButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Get.back();
+                          },
                           icon: Icon(
                             Icons.arrow_back_ios,
                             size: 17.sp,
@@ -177,219 +186,305 @@ class CartScreen extends StatelessWidget {
                       )
                     ],
                   ),
-                 SizedBox(
-                   child: ListView.separated(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    separatorBuilder: (context, index) => sizedBoxHeight20,
-                    itemBuilder: (context, index) {
-      
-                     return  Container(
-                      padding: EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                          border: Border.all(color: grey.withOpacity(0.2))),
-                      child: Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Column(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  GetBuilder<CartController>(
+                    init: cartController,
+                    builder: (controller) {
+                      if (controller.cartStatus == Status.loading) {
+                        return ListTileShimmer();
+                      } else if (controller.cart.products?.length == 0 ||
+                          controller.cartStatus == Status.failed) {
+                        return SizedBox(
+                          height: Get.height / 2,
+                          child: const Center(
+                            child: Text("No products added to cart yet!"),
+                          ),
+                        );
+                      }
+                      return SizedBox(
+                        child: ListView.separated(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          separatorBuilder: (context, index) =>
+                              sizedBoxHeight20,
+                          itemBuilder: (context, index) {
+                            Product? product =
+                                controller.cart.products?[index].product;
+                            return Container(
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                  border:
+                                      Border.all(color: grey.withOpacity(0.2))),
+                              child: Column(
                                 children: [
-                                  Image.asset('assets/images/cart1.png'),
-                                  sizedBoxHeight10,
                                   Row(
                                     mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
+                                        MainAxisAlignment.spaceAround,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
-                                      Image.asset('assets/images/cartdic.png'),
-                                      sizedBoxWidth20,
-                                      Text(
-                                        '1',
-                                        style: GoogleFonts.poppins(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 14.px),
+                                      Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          CachedNetworkImage(
+                                            width: Adaptive.w(35),
+                                            imageUrl: product?.image?.length !=
+                                                    0
+                                                ? '${product?.image?.first.url ?? ''}'
+                                                : '',
+                                            fit: BoxFit.cover,
+                                          ),
+                                          sizedBoxHeight10,
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceEvenly,
+                                            children: [
+                                              InkWell(
+                                                onTap: () {
+                                                  controller
+                                                      .decreaseProductQuantity(
+                                                          controller
+                                                                  .cart
+                                                                  .products?[
+                                                                      index]
+                                                                  .sId ??
+                                                              '');
+                                                },
+                                                child: Image.asset(
+                                                    'assets/images/cartdic.png'),
+                                              ),
+                                              sizedBoxWidth20,
+                                              Text(
+                                                '${controller.cart.products?[index].quantity}',
+                                                style: GoogleFonts.poppins(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 14.px),
+                                              ),
+                                              sizedBoxWidth20,
+                                              InkWell(
+                                                onTap: () {
+                                                  controller
+                                                      .increaseProductQuantity(
+                                                          controller
+                                                                  .cart
+                                                                  .products?[
+                                                                      index]
+                                                                  .sId ??
+                                                              '');
+                                                },
+                                                child: Image.asset(
+                                                    'assets/images/cartincr.png'),
+                                              ),
+                                            ],
+                                          )
+                                        ],
                                       ),
-                                      sizedBoxWidth20,
-                                      Image.asset('assets/images/cartincr.png'),
+                                      sizedBoxWidth30,
+                                      Expanded(
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              product?.productName ?? '',
+                                              style: GoogleFonts.poppins(
+                                                  fontWeight: FontWeight.w500,
+                                                  fontSize: 13.px),
+                                            ),
+                                            sizedBoxHeight10,
+                                            Row(
+                                              // mainAxisAlignment: MainAxisAlignment.start,
+                                              children: [
+                                                VxRating(
+                                                  size: Adaptive.h(2),
+                                                  count: 5,
+                                                  isSelectable: false,
+                                                  selectionColor: buttonColor,
+                                                  onRatingUpdate: (value) {},
+                                                ),
+                                                Text(
+                                                  '56890',
+                                                  style: TextStyle(
+                                                      color: grey,
+                                                      fontSize: 12.px),
+                                                ),
+                                                // Spacer(),
+
+                                                sizedBoxWidth20,
+                                                Text(
+                                                  'MOQ:4 Pcs',
+                                                  style: GoogleFonts.poppins(
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                      fontSize: 12.px),
+                                                )
+                                              ],
+                                            ),
+                                            sizedBoxHeight10,
+                                            Row(
+                                              // crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                // Text(
+                                                //   '6500',
+                                                //   style: TextStyle(
+                                                //       decoration: TextDecoration
+                                                //           .lineThrough,
+                                                //       color: Colors.black26,
+                                                //       fontSize: 15.px,
+                                                //       fontWeight:
+                                                //           FontWeight.w500),
+                                                // ),
+
+                                                // sizedBoxWidth10,
+                                                Text(
+                                                  '₹ ${controller.cart.products?[index].price}',
+                                                  style: TextStyle(
+                                                      color: black,
+                                                      fontSize: 15.px,
+                                                      fontWeight:
+                                                          FontWeight.w600),
+                                                ),
+                                                sizedBoxWidth60,
+                                                // Spacer(),
+                                                // Text(
+                                                //   '74% off',
+                                                //   style: GoogleFonts.poppins(
+                                                //       fontWeight: FontWeight.w500,
+                                                //       fontSize: 15.px,
+                                                //       color: Colors.green),
+                                                // ),
+                                                // Spacer(),
+                                                // Text(
+                                                //   'MOQ: 4 Pcs',
+                                                //   style: GoogleFonts.poppins(
+                                                //       fontWeight: FontWeight.w400, fontSize: 13.px),
+                                                // )
+                                              ],
+                                            ),
+                                            sizedBoxHeight10,
+                                            Text(
+                                              '2 offers applied 2 offers available ',
+                                              style: GoogleFonts.poppins(
+                                                  fontWeight: FontWeight.w500,
+                                                  fontSize: 12.px,
+                                                  color: Colors.green),
+                                            ),
+                                            sizedBoxHeight10,
+                                            RichText(
+                                                text: TextSpan(children: [
+                                              TextSpan(
+                                                  text: 'Free Delivery',
+                                                  style: GoogleFonts.poppins(
+                                                      fontSize: 12.px,
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                      color: Colors.green)),
+                                              TextSpan(
+                                                  text: 'by Thu Mar 28 | ',
+                                                  style: GoogleFonts.poppins(
+                                                      fontSize: 13.px,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      color: grey)),
+                                              TextSpan(
+                                                  text: ' ₹ 40',
+                                                  style: GoogleFonts.poppins(
+                                                      fontSize: 13.px,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      color: grey)),
+                                            ])),
+                                          ],
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                  Flex(
+                                    direction: Axis.horizontal,
+                                    children: [
+                                      Expanded(
+                                        flex: 1,
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            InkWell(
+                                              onTap: () {
+                                                controller
+                                                    .removeProductFromCart(
+                                                        controller
+                                                                .cart
+                                                                .products?[
+                                                                    index]
+                                                                .sId ??
+                                                            '');
+                                              },
+                                              child: Image.asset(
+                                                  'assets/images/cartremove.png'),
+                                            ),
+                                            sizedBoxWidth10,
+                                            Text(
+                                              'Remove',
+                                              style: GoogleFonts.poppins(
+                                                  fontSize: 12.px,
+                                                  color: grey,
+                                                  fontWeight: FontWeight.w600),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                      Expanded(
+                                        flex: 1,
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Image.asset(
+                                                'assets/images/cartsave.png'),
+                                            sizedBoxWidth10,
+                                            Text(
+                                              'Save for later',
+                                              style: GoogleFonts.poppins(
+                                                  fontSize: 12.px,
+                                                  color: grey,
+                                                  fontWeight: FontWeight.w600),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                      Expanded(
+                                        flex: 1,
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Image.asset(
+                                                'assets/images/cartbuy.png'),
+                                            sizedBoxWidth10,
+                                            Text(
+                                              'Buy this now',
+                                              style: GoogleFonts.poppins(
+                                                  fontSize: 12.px,
+                                                  color: grey,
+                                                  fontWeight: FontWeight.w600),
+                                            )
+                                          ],
+                                        ),
+                                      )
                                     ],
                                   )
                                 ],
                               ),
-                              Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Men Printed Shirt',
-                                    style: GoogleFonts.poppins(
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 13.px),
-                                  ),
-                                  sizedBoxHeight10,
-                                  Row(
-                                    // mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      VxRating(
-                                        size: Adaptive.h(2),
-                                        count: 5,
-                                        isSelectable: false,
-                                        selectionColor: buttonColor,
-                                        onRatingUpdate: (value) {},
-                                      ),
-                                      Text(
-                                        '56890',
-                                        style:
-                                            TextStyle(color: grey, fontSize: 12.px),
-                                      ),
-                                      // Spacer(),
-                 
-                                      sizedBoxWidth20,
-                                      Text(
-                                        'MOQ:4 Pcs',
-                                        style: GoogleFonts.poppins(
-                                            fontWeight: FontWeight.w400,
-                                            fontSize: 12.px),
-                                      )
-                                    ],
-                                  ),
-                                  sizedBoxHeight10,
-                                  Row(
-                                    // crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        '6500',
-                                        style: TextStyle(
-                                            decoration: TextDecoration.lineThrough,
-                                            color: Colors.black26,
-                                            fontSize: 15.px,
-                                            fontWeight: FontWeight.w500),
-                                      ),
-                 
-                                      sizedBoxWidth10,
-                                      Text(
-                                        '₹ 949',
-                                        style: TextStyle(
-                                            color: black,
-                                            fontSize: 15.px,
-                                            fontWeight: FontWeight.w600),
-                                      ),
-                                      sizedBoxWidth60,
-                                      // Spacer(),
-                                      Text(
-                                        '74% off',
-                                        style: GoogleFonts.poppins(
-                                            fontWeight: FontWeight.w500,
-                                            fontSize: 15.px,
-                                            color: Colors.green),
-                                      ),
-                                      // Spacer(),
-                                      // Text(
-                                      //   'MOQ: 4 Pcs',
-                                      //   style: GoogleFonts.poppins(
-                                      //       fontWeight: FontWeight.w400, fontSize: 13.px),
-                                      // )
-                                    ],
-                                  ),
-                                  sizedBoxHeight10,
-                                  Text(
-                                    '2 offers applied 2 offers available ',
-                                    style: GoogleFonts.poppins(
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 12.px,
-                                        color: Colors.green),
-                                  ),
-                                  sizedBoxHeight10,
-                                  RichText(
-                                      text: TextSpan(children: [
-                                    TextSpan(
-                                        text: 'Free Delivery',
-                                        style: GoogleFonts.poppins(
-                                            fontSize: 12.px,
-                                            fontWeight: FontWeight.w400,
-                                            color: Colors.green)),
-                                    TextSpan(
-                                        text: 'by Thu Mar 28 | ',
-                                        style: GoogleFonts.poppins(
-                                            fontSize: 13.px,
-                                            fontWeight: FontWeight.w500,
-                                            color: grey)),
-                                    TextSpan(
-                                        text: ' ₹ 40',
-                                        style: GoogleFonts.poppins(
-                                            fontSize: 13.px,
-                                            fontWeight: FontWeight.w500,
-                                            color: grey)),
-                                  ])),
-                                ],
-                              )
-                            ],
-                          ),
-                          Flex(
-                            direction: Axis.horizontal,
-                            children: [
-                              Expanded(
-                                flex: 1,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Image.asset('assets/images/cartremove.png'),
-                                    sizedBoxWidth10,
-                                    Text(
-                                      'Remove',
-                                      style: GoogleFonts.poppins(
-                                          fontSize: 12.px,
-                                          color: grey,
-                                          fontWeight: FontWeight.w600),
-                                    )
-                                  ],
-                                ),
-                              ),
-                              Expanded(
-                                flex: 1,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Image.asset('assets/images/cartsave.png'),
-                                    sizedBoxWidth10,
-                                    Text(
-                                      'Save for later',
-                                      style: GoogleFonts.poppins(
-                                          fontSize: 12.px,
-                                          color: grey,
-                                          fontWeight: FontWeight.w600),
-                                    )
-                                  ],
-                                ),
-                              ),
-                              Expanded(
-                                flex: 1,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Image.asset('assets/images/cartbuy.png'),
-                                    sizedBoxWidth10,
-                                    Text(
-                                      'Buy this now',
-                                      style: GoogleFonts.poppins(
-                                          fontSize: 12.px,
-                                          color: grey,
-                                          fontWeight: FontWeight.w600),
-                                    )
-                                  ],
-                                ),
-                              )
-                            ],
-                          )
-                        ],
-                      ),
-                    );
-                   },
-                   itemCount: 3,
-                   ),
-                 )
-                 ,sizedBoxHeight30
+                            );
+                          },
+                          itemCount: controller.cart.products?.length ?? 0,
+                        ),
+                      );
+                    },
+                  ),
+                  sizedBoxHeight120
                 ],
               ),
             )
@@ -397,62 +492,47 @@ class CartScreen extends StatelessWidget {
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: Container(
-        height: Adaptive.h(8),
-        width: Adaptive.w(100),
-        decoration:  BoxDecoration(
-          color: whiteColor,
-          borderRadius: BorderRadius.only(topRight: Radius.circular(Adaptive.sp(22)),
-          topLeft: Radius.circular(Adaptive.sp(22))
-          ),
-         border:Border.all(
-          color: black
-         ) 
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-             Text(
-                                        '₹11,097',
-                                        style: TextStyle(
-                                            decoration: TextDecoration.lineThrough,
-                                            color: Colors.black26,
-                                            fontSize: 12.px,
-                                            fontWeight: FontWeight.w500),
-                                      ),
-                                         Text(
-                                        '₹2,847',
-                                        style: TextStyle(
-                                            // decoration: TextDecoration.lineThrough,
-                                            color: Colors.black,
-                                            fontSize: 18.px,
-                                            fontWeight: FontWeight.w500),
-                                      ),
-                                        Container(
-            height: Adaptive.h(5.5),
-            width: Adaptive.w(45),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12.sp),
-              border: Border.all(
-                color: buttonColor,
+      floatingActionButton: GetBuilder<CartController>(
+        builder: (controller) {
+          if (controller.cart.products?.length == 0) {
+            return const SizedBox();
+          }
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Text(
+                '₹${controller.cart.totalPaidAmount ?? ''}',
+                style: TextStyle(
+                    // decoration: TextDecoration.lineThrough,
+                    color: Colors.black,
+                    fontSize: 18.px,
+                    fontWeight: FontWeight.w500),
               ),
-              color: buttonColor,
-            ),
-            child: Center(
-              child: Text(
-                'Place Order',
-                style: GoogleFonts.poppins(
-                    fontSize: 15.px,
-                    color: whiteColor,
-                    fontWeight: FontWeight.w600),
-              ),
-            ),
-          ).onTap(() {
-            Get.to(()=>const PaymentScreen());
-            
-          })
-          ],
-        ),
+              Container(
+                height: Adaptive.h(5.5),
+                width: Adaptive.w(45),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12.sp),
+                  border: Border.all(
+                    color: buttonColor,
+                  ),
+                  color: buttonColor,
+                ),
+                child: Center(
+                  child: Text(
+                    'Place Order',
+                    style: GoogleFonts.poppins(
+                        fontSize: 15.px,
+                        color: whiteColor,
+                        fontWeight: FontWeight.w600),
+                  ),
+                ),
+              ).onTap(() {
+                Get.to(() => const PaymentScreen());
+              })
+            ],
+          );
+        },
       ),
     );
   }

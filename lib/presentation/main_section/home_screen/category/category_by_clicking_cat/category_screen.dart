@@ -1,5 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:ecommerce_seller/presentation/main_section/home_screen/category/controller/category_controller.dart';
+import 'package:ecommerce_seller/presentation/main_section/home_screen/controller/product_controller.dart';
 import 'package:ecommerce_seller/presentation/main_section/home_screen/top_products/top_product_screen.dart';
 import 'package:ecommerce_seller/presentation/main_section/notification/notification_screen.dart';
 import 'package:ecommerce_seller/src/model/category/category_model.dart';
@@ -17,25 +17,6 @@ class CategoryScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<String> names = [
-      'Men',
-      'girls-\nKids',
-      'Unisex\nKids',
-      'Boys-\nKids',
-      'Women'
-    ];
-    List<String> names2 = [
-      'Shirts',
-      'T-Shirts',
-      'Jeans',
-      'Trousers',
-      'Track Pants &\nShorts',
-      'TrackSuits',
-      'Sweatshirts/\nHoodies',
-      'Jackets',
-      'Sweaters',
-      'Thermals'
-    ];
     return Scaffold(
       appBar: AppBar(
         backgroundColor: buttonColor,
@@ -70,25 +51,41 @@ class CategoryScreen extends StatelessWidget {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              SizedBox(
-                  // height: Adaptive.h(20),
-                  child: GridView.builder(
-                shrinkWrap: true,
-                // scrollDirection: Axis.horizontal,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: 5,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3,
-                    // Adjust the cross axis count to show 4 items in each row
-                    mainAxisSpacing: 5,
-                    crossAxisSpacing: 6,
-                    childAspectRatio: 1),
-                itemBuilder: (context, index) {
-                  return Stack(
-                    children: [
-                      GestureDetector(
+              GetBuilder<ProductController>(
+                builder: (controller) {
+                  if (controller.categoryStatus == Status.loading) {
+                    return const PlayStoreShimmer(
+                      hasBottomFirstLine: false,
+                      hasCustomColors: true,
+                      hasBottomSecondLine: false,
+                      padding: EdgeInsets.only(right: 16, top: 12),
+                      margin: EdgeInsets.only(right: 16, top: 12),
+                    );
+                  } else if (controller.allSubCategory.isEmpty ||
+                      controller.categoryStatus == Status.failed) {
+                    return Text("No category found");
+                  }
+                  return SizedBox(
+                      // height: Adaptive.h(20),
+                      child: GridView.builder(
+                    shrinkWrap: true,
+                    // scrollDirection: Axis.horizontal,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: 5,
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3,
+                        // Adjust the cross axis count to show 4 items in each row
+                        mainAxisSpacing: 5,
+                        crossAxisSpacing: 6,
+                        childAspectRatio: 1),
+                    itemBuilder: (context, index) {
+                      CategoryModel category = controller.allCategory[index];
+                      return GestureDetector(
                         onTap: () {
-                          Get.to(() => const TopProductScreen());
+                          Get.to(() => TopProductScreen(
+                                categoryId: category.mainCategory ?? '',
+                                type: "mainCategory",
+                              ));
                         },
                         child: Container(
                           height: Adaptive.h(13),
@@ -99,30 +96,17 @@ class CategoryScreen extends StatelessWidget {
                                   ? const Color(0xffE3DEEC)
                                   : Color(0xffE2E5D7),
                               borderRadius: BorderRadius.circular(12.sp)),
-                          child: Image.asset(
-                            'assets/images/category${index + 1}.png',
-                            height: Adaptive.h(6),
+                          child: CachedNetworkImage(
+                            imageUrl: category.image ?? '',
+                            height: Adaptive.h(8),
+                            fit: BoxFit.cover,
                           ),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                        child: Row(
-                          children: [
-                            Text(
-                              names[index],
-                              style: GoogleFonts.poppins(
-                                  fontWeight: FontWeight.w600, fontSize: 16.px),
-                            ),
-                            Spacer(),
-                            const Icon(Icons.keyboard_arrow_down)
-                          ],
-                        ),
-                      )
-                    ],
-                  );
+                      );
+                    },
+                  ));
                 },
-              )),
+              ),
               sizedBoxHeight30,
               Container(
                   padding: const EdgeInsets.all(10),
@@ -138,7 +122,7 @@ class CategoryScreen extends StatelessWidget {
                             fontWeight: FontWeight.w600, fontSize: 15.px),
                       ),
                       sizedBoxHeight10,
-                      GetBuilder<CategoryController>(
+                      GetBuilder<ProductController>(
                         builder: (controller) {
                           if (controller.subCategoryStatus == Status.loading) {
                             return const PlayStoreShimmer(
@@ -169,7 +153,11 @@ class CategoryScreen extends StatelessWidget {
                                     controller.allSubCategory[index];
                                 return InkWell(
                                   onTap: () {
-                                    Get.to(() => const TopProductScreen());
+                                    Get.to(() => TopProductScreen(
+                                          type: "subCategory",
+                                          categoryId:
+                                              categoryModel.category ?? "",
+                                        ));
                                   },
                                   child: Column(
                                     children: [
@@ -178,13 +166,6 @@ class CategoryScreen extends StatelessWidget {
                                         height: Adaptive.h(11),
                                         fit: BoxFit.contain,
                                       ),
-                                      Text(
-                                        categoryModel.name ?? "",
-                                        textAlign: TextAlign.center,
-                                        style: GoogleFonts.poppins(
-                                            fontWeight: FontWeight.w400,
-                                            fontSize: 12.px),
-                                      )
                                     ],
                                   ),
                                 );
