@@ -9,6 +9,8 @@ class ApiEndpoints {
     static const String myProfile = "/$userApis/profile";
     static const String getAllCategory = "/$userApis/categories";
     static const String getAllSubCategory = "/$userApis/subcategories";
+    static const String getTodayDeals = "/$userApis/today-deals";
+    static const String getNewArrivals = "/$userApis/new-arrivals";
 
 
 

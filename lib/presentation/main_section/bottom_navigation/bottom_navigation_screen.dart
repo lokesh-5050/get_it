@@ -1,6 +1,7 @@
 import 'package:ecommerce_seller/presentation/main_section/account/account_screen.dart';
 import 'package:ecommerce_seller/presentation/main_section/bottom_navigation/controller/bottom_navigation_controller.dart';
 import 'package:ecommerce_seller/presentation/main_section/home_screen/category/controller/category_controller.dart';
+import 'package:ecommerce_seller/presentation/main_section/home_screen/controller/product_controller.dart';
 import 'package:ecommerce_seller/presentation/main_section/home_screen/home_screen.dart';
 import 'package:ecommerce_seller/presentation/main_section/orders/orders_screen.dart';
 import 'package:ecommerce_seller/presentation/main_section/profile/controller/profile_controller.dart';
@@ -24,6 +25,8 @@ class _BottomNavigationState extends State<BottomNavigation> {
 
   final ProfileController profileController = Get.find<ProfileController>();
   final CategoryController categoryController = Get.find<CategoryController>();
+  final ProductController getTodayDealsController =
+      Get.find<ProductController>();
 
   static final List<Widget> _widgetOptions = <Widget>[
     HomeScreen(),
@@ -44,6 +47,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
     profileController.getMyProfile();
     categoryController.getAllCategory();
     categoryController.getAllSubCategory();
+    getTodayDealsController.fetchTodayDeals();
   }
 
   @override
