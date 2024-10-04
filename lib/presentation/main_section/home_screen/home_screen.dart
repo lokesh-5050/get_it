@@ -1,15 +1,22 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:ecommerce_seller/core/shared_prefs/shared_pref.dart';
+import 'package:ecommerce_seller/core/shared_prefs/shared_prefs_key_constants.dart';
 import 'package:ecommerce_seller/presentation/main_section/home_screen/category/category_by_clicking_cat/category_screen.dart';
 import 'package:ecommerce_seller/presentation/main_section/home_screen/components/extracted_homewidgets.dart';
+import 'package:ecommerce_seller/presentation/main_section/home_screen/controller/product_controller.dart';
 import 'package:ecommerce_seller/presentation/main_section/home_screen/flash_sale/flash_sale_screen.dart';
 import 'package:ecommerce_seller/presentation/main_section/home_screen/top_products/top_product_screen.dart';
 import 'package:ecommerce_seller/presentation/main_section/profile/controller/profile_controller.dart';
 import 'package:ecommerce_seller/presentation/main_section/search_screen/search_screen.dart';
 import 'package:ecommerce_seller/presentation/on_boarding_section/login_screen/login_screen.dart';
 import 'package:ecommerce_seller/presentation/widgets/bottomsheet_function.dart';
+import 'package:ecommerce_seller/src/model/product/product_model.dart';
 import 'package:ecommerce_seller/utilz/colors.dart';
+import 'package:ecommerce_seller/utilz/enums.dart';
 import 'package:ecommerce_seller/utilz/helpers.dart';
 import 'package:ecommerce_seller/utilz/sized_box.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_shimmer/flutter_shimmer.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
@@ -22,7 +29,8 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<String> name = ['Women Printed Kurta', 'Nike'];
+    debugPrint(
+        'Token : ${SharedPrefs.instance.getKey(SharedPrefKeyConstants.apiToken)}');
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -149,23 +157,82 @@ class HomeScreen extends StatelessWidget {
                   Get.to(() => CategoryScreen());
                 },
                 child: HomeCatWidgets()),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: GestureDetector(
-                  onTap: () {
-                    Get.to(() => const FlashSaleScreen());
-                  },
-                  child: Image.asset('assets/images/homeban1.png')),
+            GetBuilder<ProductController>(
+              builder: (controller) {
+                if (controller.getNewArrivalsStatus == Status.loading) {
+                  return const PlayStoreShimmer(
+                    hasBottomFirstLine: false,
+                    hasCustomColors: true,
+                    hasBottomSecondLine: false,
+                    padding: EdgeInsets.only(right: 16, top: 12),
+                    margin: EdgeInsets.only(right: 16, top: 12),
+                  );
+                } else if (controller.getNewArrivals.isEmpty ||
+                    controller.getNewArrivalsStatus == Status.failed) {
+                  return const Text("No new arrivals found");
+                }
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'New Arrivals',
+                        style: GoogleFonts.poppins(
+                            fontWeight: FontWeight.w500, fontSize: 16.px),
+                      ),
+                      sizedBoxHeight10,
+                      SizedBox(
+                        height: Adaptive.h(22),
+                        child: GestureDetector(
+                            onTap: () {
+                              Get.to(() => const FlashSaleScreen());
+                            },
+                            child: PageView.builder(
+                              controller: PageController(),
+                              itemCount: controller.getNewArrivals.length,
+                              itemBuilder: (context, index) {
+                                return Container(
+                                  width: Get.width,
+                                  child: GestureDetector(
+                                      onTap: () {
+                                        Get.to(() => const FlashSaleScreen());
+                                      },
+                                      child: CachedNetworkImage(
+                                        imageUrl: controller
+                                                .getNewArrivals[index]
+                                                .image!
+                                                .isNotEmpty
+                                            ? controller.getNewArrivals[index]
+                                                .image!.first.url
+                                                .toString()
+                                            : "",
+                                        fit: BoxFit.cover,
+                                        alignment: Alignment.topCenter,
+                                      )),
+                                );
+                              },
+                            )),
+                      ),
+                    ],
+                  ),
+                );
+              },
             ),
+
             sizedBoxHeight20,
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: GestureDetector(
                   onTap: () {
-                    Get.to(() => const TopProductScreen());
+                    Get.to(() => const TopProductScreen(
+                          categoryId: "",
+                          type: "",
+                        ));
                   },
                   child: Image.asset('assets/images/homeban2.png')),
             ),
+            sizedBoxHeight10,
             Padding(
               padding: const EdgeInsets.only(left: 8.0),
               child: Align(
@@ -313,22 +380,38 @@ class HomeScreen extends StatelessWidget {
                 ],
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: SizedBox(
-                height: Adaptive.h(30),
-                width: Adaptive.w(100),
-                child: ListView.separated(
-                  shrinkWrap: true,
-                  scrollDirection: Axis.horizontal,
-                  physics: AlwaysScrollableScrollPhysics(),
-                  itemCount: 2,
-                  separatorBuilder: (context, index) => sizedBoxWidth10,
-                  itemBuilder: (context, index) {
-                    return itemsOfProducts(index, name);
-                  },
-                ),
-              ),
+            GetBuilder<ProductController>(
+              builder: (controller) {
+                if (controller.getTodayDealsStatus == Status.loading) {
+                  return const PlayStoreShimmer(
+                    hasBottomFirstLine: false,
+                    hasCustomColors: true,
+                    hasBottomSecondLine: false,
+                    padding: EdgeInsets.only(right: 16, top: 12),
+                    margin: EdgeInsets.only(right: 16, top: 12),
+                  );
+                } else if (controller.getTodayDeals.isEmpty ||
+                    controller.getTodayDealsStatus == Status.failed) {
+                  return const Text("No deals at the moment");
+                }
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: SizedBox(
+                    height: Adaptive.h(30),
+                    width: Adaptive.w(100),
+                    child: ListView.separated(
+                      shrinkWrap: true,
+                      scrollDirection: Axis.horizontal,
+                      physics: AlwaysScrollableScrollPhysics(),
+                      itemCount: controller.getTodayDeals.length,
+                      separatorBuilder: (context, index) => sizedBoxWidth10,
+                      itemBuilder: (context, index) {
+                        return itemsOfProducts(controller.getTodayDeals[index]);
+                      },
+                    ),
+                  ),
+                );
+              },
             ),
             sizedBoxHeight20,
             Padding(
@@ -367,30 +450,30 @@ class HomeScreen extends StatelessWidget {
                 ],
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: SizedBox(
-                height: Adaptive.h(30),
-                width: Adaptive.w(100),
-                child: ListView.separated(
-                  shrinkWrap: true,
-                  scrollDirection: Axis.horizontal,
-                  physics: AlwaysScrollableScrollPhysics(),
-                  itemCount: 2,
-                  separatorBuilder: (context, index) => sizedBoxWidth10,
-                  itemBuilder: (context, index) {
-                    return itemsOfProducts(index, name);
-                  },
-                ),
-              ),
-            )
+            // Padding(
+            //   padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            //   child: SizedBox(
+            //     height: Adaptive.h(30),
+            //     width: Adaptive.w(100),
+            //     child: ListView.separated(
+            //       shrinkWrap: true,
+            //       scrollDirection: Axis.horizontal,
+            //       physics: AlwaysScrollableScrollPhysics(),
+            //       itemCount: 2,
+            //       separatorBuilder: (context, index) => sizedBoxWidth10,
+            //       itemBuilder: (context, index) {
+            //         return itemsOfProducts(index, name);
+            //       },
+            //     ),
+            //   ),
+            // )
           ],
         ),
       ),
     );
   }
 
-  InkWell itemsOfProducts(int index, List<String> name) {
+  InkWell itemsOfProducts(ProductModel deal) {
     return InkWell(
       onTap: () {
         // Navigator.push(context, MaterialPageRoute(builder: (context) => AnimalDetails(),));
@@ -415,10 +498,16 @@ class HomeScreen extends StatelessWidget {
                     // height: 11.h,
                     width: 100.w,
                     // color: green,
-                    child: Image.asset(
-                      'assets/images/wishlist${index + 1}.png',
-                      fit: BoxFit.cover,
+                    // child: Image.asset(
+                    //   'assets/images/wishlist${index + 1}.png',
+                    //   fit: BoxFit.cover,
+                    //   width: 100.w,
+                    // ),
+                    child: CachedNetworkImage(
+                      imageUrl:
+                          "${deal.image!.isNotEmpty ? deal.image!.first.url : ""}",
                       width: 100.w,
+                      fit: BoxFit.cover,
                     ),
                   ),
                   Padding(
@@ -429,7 +518,7 @@ class HomeScreen extends StatelessWidget {
                     child: Row(
                       children: [
                         Text(
-                          '${name[index]}',
+                          deal.productName ?? '',
                           style: TextStyle(
                               color: black,
                               fontSize: 13.px,
@@ -445,7 +534,7 @@ class HomeScreen extends StatelessWidget {
                     child: Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          'Neque porro quisquam est qui dolorem ipsum quia',
+                          deal.description ?? '',
                           maxLines: 2,
                           style: TextStyle(
                               color: black,
@@ -459,7 +548,7 @@ class HomeScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          '₹5500',
+                          '₹${deal.discountPrice}',
                           style: TextStyle(
                               color: black,
                               fontSize: 13.px,
@@ -467,7 +556,7 @@ class HomeScreen extends StatelessWidget {
                         ),
                         Spacer(),
                         Text(
-                          'MOQ: 4 Pcs',
+                          'MOQ: ${deal.stock} Pcs',
                           style: GoogleFonts.poppins(
                               fontWeight: FontWeight.w400, fontSize: 13.px),
                         )
@@ -480,7 +569,7 @@ class HomeScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          '6500',
+                          '₹${deal.originalPrice}',
                           style: TextStyle(
                               decoration: TextDecoration.lineThrough,
                               color: Colors.black26,
@@ -500,12 +589,12 @@ class HomeScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       VxRating(
-                        count: 5,
+                        count: int.tryParse(deal.rating.toString()) ?? 0,
                         selectionColor: buttonColor,
                         onRatingUpdate: (value) {},
                       ),
                       Text(
-                        '56890',
+                        '${deal.numOfReviews}',
                         style: TextStyle(color: grey, fontSize: 12.px),
                       )
                     ],

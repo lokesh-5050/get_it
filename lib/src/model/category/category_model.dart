@@ -4,9 +4,15 @@ class CategoryModel {
   String? image;
   bool? status;
   String? mainCategory;
+  String? category;
 
   CategoryModel(
-      {this.sId, this.name, this.image, this.status, this.mainCategory});
+      {this.sId,
+      this.name,
+      this.image,
+      this.status,
+      this.mainCategory,
+      this.category});
 
   CategoryModel.fromJson(Map<String, dynamic> json) {
     sId = json['_id'];
@@ -14,6 +20,7 @@ class CategoryModel {
     image = json['image'];
     status = json['status'];
     mainCategory = json['mainCategory'];
+    category = json['category'];
   }
 
   Map<String, dynamic> toJson() {
@@ -23,6 +30,7 @@ class CategoryModel {
     data['image'] = this.image;
     data['status'] = this.status;
     data['mainCategory'] = this.mainCategory;
+    data['category'] = this.category;
     return data;
   }
 }

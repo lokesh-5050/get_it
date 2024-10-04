@@ -8,6 +8,25 @@ class ApiEndpoints {
     static const String register = "/$userApis/register";
     static const String myProfile = "/$userApis/profile";
     static const String getAllCategory = "/$userApis/categories";
+    static const String getAllSubCategory = "/$userApis/subcategories";
+    static const String getTodayDeals = "/$userApis/today-deals";
+    static const String getNewArrivals = "/$userApis/new-arrivals";
+
+
+    static const String getProductsByMainCategory = "/$userApis/products/mainCategory";
+    static const String getProductById = "/$userApis/products";
+
+    static const String getCart = "/$userApis/cart/get";
+
+    static const String addToCart = "/$userApis/cart/add";
+
+    static const String deleteFromCart = "/$userApis/cart/delete";
+
+    static const String updateCartQuantity = "/$userApis/cart/updateQuantity";
+
+    static const String deleteCardProductById = "/$userApis/cart/products";
+
+
 
 
 

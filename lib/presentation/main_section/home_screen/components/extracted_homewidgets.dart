@@ -1,5 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:ecommerce_seller/presentation/main_section/home_screen/category/controller/category_controller.dart';
+import 'package:ecommerce_seller/presentation/main_section/home_screen/controller/product_controller.dart';
 import 'package:ecommerce_seller/src/model/category/category_model.dart';
 import 'package:ecommerce_seller/utilz/enums.dart';
 import 'package:ecommerce_seller/utilz/sized_box.dart';
@@ -10,13 +10,16 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class HomeCatWidgets extends StatelessWidget {
-  const HomeCatWidgets({
+  HomeCatWidgets({
     super.key,
   });
 
+  final ProductController productController = Get.find<ProductController>();
+
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<CategoryController>(
+    return GetBuilder<ProductController>(
+      init: productController,
       builder: (controller) {
         if (controller.categoryStatus == Status.loading) {
           return const PlayStoreShimmer(
